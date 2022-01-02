@@ -11,6 +11,8 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -47,10 +49,23 @@ public class CustomerService {
 
     @Transactional(readOnly = true)
     public List<CustomerDto> findAll(){
-        return customerRepository.findAll()
-                .stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+        final List<CustomerDto> customerDtoArrayList = new ArrayList<CustomerDto>();
+        customerRepository.findAll()
+                .forEach(customer -> {
+
+                    CustomerDto customerDto = new CustomerDto();
+                    if(customer != null){
+                        customerDto.setFirstName(customer.getFirstName());
+                        customerDto.setLastName(customer.getLastName());
+                        customerDto.setIdentificationNumber(customer.getIdentificationNumber());
+                        customerDto.setPhoneNumber(customer.getPhoneNumber());
+                    }
+
+                    customerDtoArrayList.add(customerDto);
+
+                });
+
+        return customerDtoArrayList;
     }
 
     @Transactional(readOnly = true)
@@ -58,20 +73,15 @@ public class CustomerService {
         final Customer customer =  customerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException());
 
-        return this.convertToDto(customer);
-    }
-
-    private CustomerDto convertToDto(Customer customer){
         CustomerDto customerDto = new CustomerDto();
-
         if(customer != null){
             customerDto.setFirstName(customer.getFirstName());
             customerDto.setLastName(customer.getLastName());
-            customerDto.setIdentificationNumber(customerDto.getIdentificationNumber());
+            customerDto.setIdentificationNumber(customer.getIdentificationNumber());
             customerDto.setPhoneNumber(customer.getPhoneNumber());
         }
 
-        return null;
+        return customerDto;
     }
 
     @Transactional
