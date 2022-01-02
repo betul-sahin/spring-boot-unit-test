@@ -1,6 +1,7 @@
 package com.betulsahin.springbootunittest.services;
 
 import com.betulsahin.springbootunittest.dto.CustomerDto;
+import com.betulsahin.springbootunittest.exceptions.IdentificationNumberNotValidException;
 import com.betulsahin.springbootunittest.models.Customer;
 import com.betulsahin.springbootunittest.repositories.CustomerRepository;
 import com.betulsahin.springbootunittest.services.validators.IdentificationNumberValidator;
@@ -30,6 +31,10 @@ public class CustomerService {
         // Is the identification number valid ?
         boolean isValidIdentificationNumber = identificationNumberValidator.
                 test(request.getIdentificationNumber());
+
+        if (!isValidIdentificationNumber) {
+            throw new IdentificationNumberNotValidException("Identification number not valid.");
+        }
 
         Optional<Customer> customerOptional = customerRepository
                 .findByIdentificationNumber(request.getIdentificationNumber());
