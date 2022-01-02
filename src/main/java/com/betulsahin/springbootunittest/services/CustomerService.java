@@ -3,6 +3,7 @@ package com.betulsahin.springbootunittest.services;
 import com.betulsahin.springbootunittest.dto.CustomerDto;
 import com.betulsahin.springbootunittest.models.Customer;
 import com.betulsahin.springbootunittest.repositories.CustomerRepository;
+import com.betulsahin.springbootunittest.services.validators.IdentificationNumberValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +20,14 @@ import java.util.stream.Collectors;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final IdentificationNumberValidator identificationNumberValidator;
 
     @Transactional
     public Optional<Customer> create(CustomerDto request){
+
+        // Is the identification number valid ?
+        boolean isValidIdentificationNumber = identificationNumberValidator.
+                test(request.getIdentificationNumber());
 
         Optional<Customer> customerOptional = customerRepository
                 .findByIdentificationNumber(request.getIdentificationNumber());
