@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -15,6 +18,22 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public AppErrorResponse handleException(IdentificationNumberNotValidException ex){
         AppErrorResponse response = prepareErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return response;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({EntityExistsException.class})
+    @ResponseBody
+    public AppErrorResponse handleException(EntityExistsException ex){
+        AppErrorResponse response = prepareErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return response;
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler({EntityNotFoundException.class})
+    @ResponseBody
+    public AppErrorResponse handleException(EntityNotFoundException ex){
+        AppErrorResponse response = prepareErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
         return response;
     }
 
