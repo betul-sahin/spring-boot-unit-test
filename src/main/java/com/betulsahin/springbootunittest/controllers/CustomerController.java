@@ -40,6 +40,9 @@ public class CustomerController {
     @GetMapping("{id}")
     public ResponseEntity<CustomerDto> getById(@PathVariable long id){
         final CustomerDto customerDto = customerService.findById(id);
+        if(customerDto == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
         return new ResponseEntity<>(customerDto, HttpStatus.OK);
     }
